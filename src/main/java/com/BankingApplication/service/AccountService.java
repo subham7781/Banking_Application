@@ -41,11 +41,9 @@ public class AccountService {
         dto.setBalance(save.getBalance());
         return dto;
     }
-
     public void delectAccount(long id) {
         accountRepository.deleteById(id);
     }
-
     public AccountDto UpdateAccount(AccountDto accountDto, String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
 
@@ -62,8 +60,7 @@ public class AccountService {
         dto.setBalance(save.getBalance());
         return dto;
     }
-
-    public AccountDto FindByAccountNumber(String accountNumber) {
+    public Account FindByAccountNumber(String accountNumber) {
         Account byAccountNumber = accountRepository.findByAccountNumber(accountNumber);
 
         AccountDto dto = new AccountDto();
@@ -72,14 +69,13 @@ public class AccountService {
         dto.setAccountNumber(byAccountNumber.getAccountNumber());
         dto.setBalance(byAccountNumber.getBalance());
         dto.setEmail(byAccountNumber.getEmail());
-        return dto;
+        return byAccountNumber;
     }
 
     public List<Account> getAllAc() {
         List<Account> all = accountRepository.findAll();
         return all;
     }
-
     public Account deposit(String accountNumber, BigDecimal amount) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
         if (account == null) {
@@ -89,7 +85,7 @@ public class AccountService {
         // Update account balance
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
-        emailSender.EmailSenderToCustomer(account.getEmail(), "State Bank of India", "Your A/C XXXXX455 CREDIT with Amount Rs. ₹" + amount);
+        emailSender.EmailSenderToCustomer(account.getEmail(), "State Bank of India", "Your Account XXXX455 has been CREDITED with an amount of ₹" + amount);
 
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
@@ -100,7 +96,6 @@ public class AccountService {
         transactionRepository.save(transaction);
         return account;
     }
-
     public Account withdraw(String accountNumber, BigDecimal amount) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
 
@@ -116,7 +111,7 @@ public class AccountService {
         // Update account balance
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
-        emailSender.EmailSenderToCustomer(account.getEmail(), "State Bank Of India", "Your A/C XXXXX455 DEBIT with Amount Rs. ₹" + amount);
+        emailSender.EmailSenderToCustomer(account.getEmail(), "State Bank Of India", "Your Account XXXX455 has been DEBITED with an amount of ₹" + amount);
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(amount);
@@ -126,7 +121,6 @@ public class AccountService {
         transactionRepository.save(transaction);
         return account;
     }
-
     public List<Transaction> getTransactionByAccountNumber(String accountNumber) {
         List<Transaction> transaction = transactionRepository.getTransactionByAccountNumber(accountNumber);
         TransactionDto transactionDto = new TransactionDto();

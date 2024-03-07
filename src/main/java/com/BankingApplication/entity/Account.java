@@ -1,12 +1,16 @@
 package com.BankingApplication.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -30,5 +34,5 @@ public class Account {
     @NotNull(message = "Balance cannot be null.")
     @DecimalMin(value = "0.01", message = "Balance must be positive.")
     private BigDecimal balance;
-
 }
+

@@ -1,6 +1,7 @@
 package com.BankingApplication.exception;
 
 import com.BankingApplication.payload.ValidationErrorResponse;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,6 +32,6 @@ public class GlobalExceptionHandler {
             Exception e,
             WebRequest request
     ){
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
