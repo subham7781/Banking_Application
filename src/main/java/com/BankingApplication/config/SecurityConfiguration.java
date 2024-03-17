@@ -1,8 +1,12 @@
 package com.BankingApplication.config;
 
+import com.BankingApplication.Security.CustomerUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +23,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private CustomerUserDetailsService userDetailsService;
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -32,20 +38,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE,"/api/**").permitAll()
                 .antMatchers(HttpMethod.PUT,"/api/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic();
     }
-
-    @Override
     @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails employee = User.builder().username("kartik").password(passwordEncoder().encode("kartik")).roles("EMPLOYEE").build();
-        UserDetails admin = User.builder().username("kanha").password(passwordEncoder().encode("kanha")).roles("ADMIN").build();
-        UserDetails manager = User.builder().username("subham").password(passwordEncoder().encode("subham")).roles("MANAGER").build();
-        return new InMemoryUserDetailsManager(employee, admin,manager);
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
-
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
 
 }
